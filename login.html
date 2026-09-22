@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login Admin — WebGIS Semarang</title>
+<link rel="stylesheet" href="css/fontawesome-all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; font-family: 'Segoe UI', Tahoma, sans-serif; }
+  body {
+    background: linear-gradient(135deg, #e8f4f8, #d4e9f7);
+    display: flex; flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .topbar {
+    padding: 16px 32px;
+    background: #2c3e50;
+    color: #fff;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 600;
+  }
+  .topbar .logo-circle {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #3498db;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+
+  .container {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .login-card {
+    width: 100%; max-width: 420px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+  .login-header {
+    background: linear-gradient(135deg, #d6eaf8, #aed6f1);
+    padding: 20px;
+    text-align: center;
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .login-body { padding: 28px; }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    font-size: 12px; font-weight: 600;
+    color: #34495e; margin-bottom: 6px;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #dfe6e9;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.15);
+  }
+
+  .checkbox-row {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: #34495e;
+    margin-bottom: 18px;
+  }
+  .checkbox-row input { width: auto; }
+
+  .forgot {
+    font-size: 11px; color: #3498db;
+    text-decoration: none; float: right;
+    margin-top: 4px;
+  }
+  .forgot:hover { text-decoration: underline; }
+
+  .btn-login {
+    width: 100%;
+    padding: 12px;
+    background: #2c3e50;
+    color: #fff;
+    border: none; border-radius: 6px;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: inherit;
+  }
+  .btn-login:hover { background: #34495e; }
+  .btn-login:disabled { background: #95a5a6; cursor: not-allowed; }
+
+  .back-link {
+    display: block;
+    text-align: center;
+    font-size: 12px;
+    color: #7f8c8d;
+    text-decoration: none;
+    margin-top: 16px;
+  }
+  .back-link:hover { color: #3498db; }
+
+  .error-msg {
+    background: #fee;
+    color: #c0392b;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-bottom: 16px;
+    border-left: 3px solid #c0392b;
+    display: none;
+  }
+
+  .success-msg {
+    background: #efe;
+    color: #27ae60;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-bottom: 16px;
+    border-left: 3px solid #27ae60;
+    display: none;
+  }
+
+  .footer {
+    padding: 14px;
+    text-align: center;
+    font-size: 11px;
+    color: #95a5a6;
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="logo-circle"><i class="fas fa-map-marked-alt"></i></div>
+    Sistem Informasi Dinamika Penyakit Menular — Kota Semarang
+  </div>
+
+  <div class="container">
+    <div class="login-card">
+      <div class="login-header">
+        <i class="fas fa-lock"></i> Login Admin
+      </div>
+      <div class="login-body">
+
+        <div class="error-msg" id="errMsg"></div>
+        <div class="success-msg" id="okMsg"></div>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Masukkan username Anda" required autocomplete="username">
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Masukkan password Anda" required autocomplete="current-password">
+          </div>
+
+          <div class="checkbox-row">
+            <input type="checkbox" id="showPw" onchange="togglePw()">
+            <label for="showPw" style="margin:0;font-weight:400;cursor:pointer;">Tampilkan Password</label>
+            <a href="#" class="forgot" onclick="alert('Hubungi admin sistem untuk reset password.');return false;">Forgot Password?</a>
+          </div>
+
+          <button type="submit" class="btn-login" id="btnLogin">
+            <i class="fas fa-sign-in-alt"></i> Masuk
+          </button>
+
+          <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Kembali ke Halaman Utama
+          </a>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    © 2024 Dinas Kesehatan Kota Semarang | Developed by [Arva Akhadi]
+  </footer>
+
+  <script>
+    function togglePw() {
+      const pw = document.getElementById('password');
+      pw.type = pw.type === 'password' ? 'text' : 'password';
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnLogin');
+      const errBox = document.getElementById('errMsg');
+      const okBox = document.getElementById('okMsg');
+      errBox.style.display = 'none';
+      okBox.style.display = 'none';
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memverifikasi...';
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('admins')
+          .select('username, role')
+          .eq('username', username)
+          .eq('password', password)
+          .limit(1);
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          setSession({
+            username: data[0].username,
+            role: data[0].role || 'admin',
+            loginAt: new Date().toISOString()
+          });
+          okBox.textContent = 'Login berhasil! Mengalihkan...';
+          okBox.style.display = 'block';
+          setTimeout(() => { window.location.href = 'map.html'; }, 800);
+        } else {
+          errBox.textContent = 'Username atau password salah.';
+          errBox.style.display = 'block';
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+        }
+      } catch (err) {
+        console.error(err);
+        errBox.textContent = 'Terjadi kesalahan koneksi. Coba lagi.';
+        errBox.style.display = 'block';
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Masuk';
+      }
+    });
+  </script>
+</body>
+</html>

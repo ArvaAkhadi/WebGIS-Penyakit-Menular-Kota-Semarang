@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Laporkan Kasus — WebGIS Semarang</title>
+<link rel="stylesheet" href="css/fontawesome-all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI', Tahoma, sans-serif; background:#ecf0f1; min-height:100vh; }
+
+  .topbar {
+    background: #2c3e50; color: #fff;
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px;
+  }
+  .topbar a {
+    color: #fff; text-decoration: none;
+    font-size: 13px; margin-right: 12px;
+  }
+  .topbar a:hover { opacity: 0.8; }
+  .topbar .title { font-weight: 700; }
+
+  .form-container {
+    max-width: 780px;
+    margin: 30px auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .form-title {
+    text-align: center;
+    padding: 22px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #2c3e50;
+    border-bottom: 1px solid #ecf0f1;
+  }
+  .form-section {
+    padding: 18px 24px;
+  }
+  .form-section h3 {
+    font-size: 13px;
+    color: #2c3e50;
+    padding: 8px 12px;
+    background: #e8f4f8;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .form-row label {
+    font-size: 12px;
+    color: #34495e;
+  }
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dfe6e9;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: inherit;
+  }
+  .form-row input:focus,
+  .form-row select:focus,
+  .form-row textarea:focus {
+    outline: none; border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.12);
+  }
+  .radio-group { display: flex; gap: 20px; font-size: 12px; }
+  .radio-group label {
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer; color: #34495e;
+  }
+  .form-footer {
+    padding: 16px 24px;
+    background: #f8f9fa;
+    text-align: right;
+    border-top: 1px solid #ecf0f1;
+  }
+  .btn-submit {
+    padding: 10px 26px;
+    background: #2980b9; color: #fff;
+    border: none; border-radius: 5px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+  }
+  .btn-submit:hover { background: #1f6391; }
+  .btn-submit:disabled { background: #95a5a6; cursor: not-allowed; }
+  .note {
+    font-size: 11px; color: #7f8c8d;
+    text-align: right; padding: 0 24px 18px;
+  }
+  .alert {
+    padding: 12px 20px;
+    margin: 0 24px 18px;
+    border-radius: 6px;
+    font-size: 12px;
+    display: none;
+  }
+  .alert.success { background: #efe; color: #27ae60; border-left: 3px solid #27ae60; display: block; }
+  .alert.error { background: #fee; color: #c0392b; border-left: 3px solid #c0392b; display: block; }
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="map-user.html"><i class="fas fa-arrow-left"></i> Kembali</a>
+  <div class="title">Laporkan Kasus Penyakit Menular — Kota Semarang</div>
+</div>
+
+<div class="form-container">
+  <div class="form-title">Formulir Pelaporan Kasus Baru</div>
+
+  <div class="alert" id="alertBox"></div>
+
+  <form id="reportForm">
+
+    <!-- INFORMASI INFORMAN -->
+    <div class="form-section">
+      <h3><i class="fas fa-user-circle"></i> Informasi Informan</h3>
+      <div class="form-row">
+        <label>Nama Lengkap Informan</label>
+        <input type="text" name="reporter_name" placeholder="Nama Lengkap Informan" required>
+      </div>
+      <div class="form-row">
+        <label>Nomor Kontak Informan</label>
+        <input type="text" name="reporter_phone" placeholder="Nomor Kontak Informan">
+      </div>
+      <div class="form-row">
+        <label>Alamat Informan</label>
+        <input type="text" name="reporter_address" placeholder="Alamat Informan">
+      </div>
+    </div>
+
+    <!-- INFORMASI PENDERITA -->
+    <div class="form-section">
+      <h3><i class="fas fa-user-injured"></i> Informasi Penderita</h3>
+      <div class="form-row">
+        <label>Nama Lengkap Penderita</label>
+        <input type="text" name="patient_name" placeholder="Nama Lengkap Penderita" required>
+      </div>
+      <div class="form-row">
+        <label>Nomor Kontak Penderita/Keluarga</label>
+        <input type="text" name="patient_contact" placeholder="Nomor Kontak Penderita/Keluarga">
+      </div>
+      <div class="form-row">
+        <label>Jenis Kelamin</label>
+        <select name="gender" required>
+          <option value="">— Pilih —</option>
+          <option value="Laki-laki">Laki-laki</option>
+          <option value="Perempuan">Perempuan</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Domisili (Kecamatan)</label>
+        <select name="kecamatan" required>
+          <option value="">— Pilih —</option>
+          <option>Semarang Tengah</option>
+          <option>Semarang Barat</option>
+          <option>Semarang Timur</option>
+          <option>Semarang Utara</option>
+          <option>Semarang Selatan</option>
+          <option>Gajahmungkur</option>
+          <option>Candisari</option>
+          <option>Gayamsari</option>
+          <option>Genuk</option>
+          <option>Pedurungan</option>
+          <option>Tembalang</option>
+          <option>Banyumanik</option>
+          <option>Gunungpati</option>
+          <option>Mijen</option>
+          <option>Ngaliyan</option>
+          <option>Tugu</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Jenis Penyakit</label>
+        <select name="disease" required>
+          <option value="">— Pilih —</option>
+          <option value="dbd">DBD (Demam Berdarah)</option>
+          <option value="leptospirosis">Leptospirosis</option>
+          <option value="tb_baru">TB Baru</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Kondisi Penderita</label>
+        <div class="radio-group">
+          <label><input type="radio" name="kondisi" value="Meninggal"> Meninggal</label>
+          <label><input type="radio" name="kondisi" value="Rawat Inap" checked> Rawat Inap</label>
+          <label><input type="radio" name="kondisi" value="Rawat Jalan"> Rawat Jalan</label>
+        </div>
+      </div>
+    </div>
+
+    <p class="note">Data yang Anda laporkan akan diverifikasi oleh admin terlebih dahulu.</p>
+
+    <div class="form-footer">
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        <i class="fas fa-paper-plane"></i> Kirim Laporan
+      </button>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById('reportForm');
+  const btn  = document.getElementById('btnSubmit');
+  const alertBox = document.getElementById('alertBox');
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    alertBox.className = 'alert';
+    alertBox.style.display = 'none';
+
+    const data = {
+      reporter_name:    form.reporter_name.value.trim(),
+      reporter_phone:   form.reporter_phone.value.trim(),
+      reporter_address: form.reporter_address.value.trim(),
+      patient_name:     form.patient_name.value.trim(),
+      patient_contact:  form.patient_contact.value.trim(),
+      gender:           form.gender.value,
+      kecamatan:        form.kecamatan.value,
+      disease:          form.disease.value,
+      kondisi:          form.querySelector('input[name="kondisi"]:checked').value,
+      status:           'pending'
+    };
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+    try {
+      const { error } = await supabaseClient.from('reports').insert([data]);
+      if (error) throw error;
+
+      alertBox.className = 'alert success';
+      alertBox.textContent = '✓ Laporan berhasil dikirim! Menunggu verifikasi admin.';
+      form.reset();
+
+      setTimeout(() => { window.location.href = 'map-user.html'; }, 2200);
+    } catch (err) {
+      console.error(err);
+      alertBox.className = 'alert error';
+      alertBox.textContent = '✗ Gagal mengirim laporan: ' + (err.message || 'Coba lagi.');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Laporan';
+    }
+  });
+</script>
+</body>
+</html>

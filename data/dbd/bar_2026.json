@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Bandarharjo",
+    "perempuan": 0,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Karangdoro",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Candilama",
+    "perempuan": 1,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  }
+]

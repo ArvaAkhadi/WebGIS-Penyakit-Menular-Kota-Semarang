@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Update Data — WebGIS Admin</title>
+<link rel="stylesheet" href="css/fontawesome-all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI', Tahoma, sans-serif; background:#ecf0f1; min-height:100vh; }
+
+  .topbar {
+    background: #2c3e50; color: #fff;
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px;
+  }
+  .topbar a { color:#fff; text-decoration:none; font-size:13px; }
+  .topbar a:hover { opacity: 0.8; }
+  .topbar .title { font-weight: 700; }
+
+  .form-container {
+    max-width: 720px; margin: 30px auto;
+    background: #fff; border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .form-title {
+    text-align: center; padding: 22px;
+    font-size: 18px; font-weight: 700; color: #2c3e50;
+    border-bottom: 1px solid #ecf0f1;
+  }
+  .form-section { padding: 18px 24px; }
+  .form-section h3 {
+    font-size: 13px; color: #2c3e50;
+    padding: 8px 12px; background: #e8f4f8;
+    border-radius: 4px; margin-bottom: 14px; font-weight: 600;
+  }
+  .form-row {
+    display: grid; grid-template-columns: 200px 1fr;
+    gap: 12px; align-items: center; margin-bottom: 10px;
+  }
+  .form-row label { font-size: 12px; color: #34495e; }
+  .form-row input, .form-row select {
+    width: 100%; padding: 8px 12px;
+    border: 1px solid #dfe6e9; border-radius: 5px;
+    font-size: 12px; font-family: inherit;
+  }
+  .form-row input:focus, .form-row select:focus {
+    outline: none; border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.12);
+  }
+  .radio-group { display:flex; gap:20px; font-size:12px; }
+  .radio-group label {
+    display:flex; align-items:center; gap:6px;
+    cursor:pointer; color:#34495e;
+  }
+  .form-footer {
+    padding: 16px 24px; background: #f8f9fa;
+    text-align: right; border-top: 1px solid #ecf0f1;
+  }
+  .btn-submit {
+    padding: 10px 26px; background: #2980b9; color: #fff;
+    border: none; border-radius: 5px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit;
+  }
+  .btn-submit:hover { background: #1f6391; }
+  .btn-submit:disabled { background: #95a5a6; cursor: not-allowed; }
+  .note { font-size: 11px; color: #7f8c8d; text-align: right; padding: 0 24px 18px; }
+  .alert {
+    padding: 12px 20px; margin: 0 24px 18px;
+    border-radius: 6px; font-size: 12px; display: none;
+  }
+  .alert.success { background: #efe; color: #27ae60; border-left: 3px solid #27ae60; display: block; }
+  .alert.error { background: #fee; color: #c0392b; border-left: 3px solid #c0392b; display: block; }
+  @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; gap: 4px; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="map.html"><i class="fas fa-arrow-left"></i> Kembali ke Dashboard</a>
+  <div class="title">Update Data Kasus Penyakit Menular — Kota Semarang</div>
+</div>
+
+<div class="form-container">
+  <div class="form-title">Formulir Pemutakhiran Data Kasus</div>
+
+  <div class="alert" id="alertBox"></div>
+
+  <form id="updateForm">
+
+    <div class="form-section">
+      <h3><i class="fas fa-user-edit"></i> Informasi Pengisi Data</h3>
+      <div class="form-row">
+        <label>Nama/Instansi Pengisi</label>
+        <input type="text" id="pengisi" placeholder="Nama/Instansi Pengisi" required>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3><i class="fas fa-database"></i> Informasi Data Kasus</h3>
+      <div class="form-row">
+        <label>Jenis Penyakit</label>
+        <select id="disease" required>
+          <option value="dbd">DBD (Demam Berdarah)</option>
+          <option value="leptospirosis">Leptospirosis</option>
+          <option value="tb_baru">TB Baru</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Tahun</label>
+        <select id="year" required>
+          <option>2019</option><option>2020</option><option>2021</option>
+          <option>2022</option><option>2023</option><option>2024</option>
+          <option selected>2025</option><option>2026</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Kecamatan</label>
+        <select id="kecamatan" required>
+          <option>Semarang Tengah</option>
+          <option>Semarang Barat</option>
+          <option>Semarang Timur</option>
+          <option>Semarang Utara</option>
+          <option>Semarang Selatan</option>
+          <option>Gajahmungkur</option>
+          <option>Candisari</option>
+          <option>Gayamsari</option>
+          <option>Genuk</option>
+          <option>Pedurungan</option>
+          <option>Tembalang</option>
+          <option>Banyumanik</option>
+          <option>Gunungpati</option>
+          <option>Mijen</option>
+          <option>Ngaliyan</option>
+          <option>Tugu</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Jumlah Laki-laki</label>
+        <input type="number" id="laki_laki" min="0" value="0">
+      </div>
+      <div class="form-row">
+        <label>Jumlah Perempuan</label>
+        <input type="number" id="perempuan" min="0" value="0">
+      </div>
+      <div class="form-row">
+        <label>Meninggal Laki-laki</label>
+        <input type="number" id="meninggal_laki_laki" min="0" value="0">
+      </div>
+      <div class="form-row">
+        <label>Meninggal Perempuan</label>
+        <input type="number" id="meninggal_perempuan" min="0" value="0">
+      </div>
+    </div>
+
+    <p class="note">Data yang Anda perbarui akan menggantikan data sebelumnya. Pastikan informasi akurat.</p>
+
+    <div class="form-footer">
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        <i class="fas fa-save"></i> Perbarui Data
+      </button>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  if (!requireAdmin()) { /* redirect */ }
+
+  const form = document.getElementById('updateForm');
+  const btn  = document.getElementById('btnSubmit');
+  const alertBox = document.getElementById('alertBox');
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    alertBox.className = 'alert';
+    alertBox.style.display = 'none';
+
+    const payload = {
+      disease:              document.getElementById('disease').value,
+      year:                 parseInt(document.getElementById('year').value),
+      kecamatan:            document.getElementById('kecamatan').value,
+      laki_laki:            parseInt(document.getElementById('laki_laki').value) || 0,
+      perempuan:            parseInt(document.getElementById('perempuan').value) || 0,
+      meninggal_laki_laki:  parseInt(document.getElementById('meninggal_laki_laki').value) || 0,
+      meninggal_perempuan:  parseInt(document.getElementById('meninggal_perempuan').value) || 0,
+      updated_at:           new Date().toISOString()
+    };
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+    try {
+      const { error } = await supabaseClient
+        .from('disease_data')
+        .upsert([payload], { onConflict: 'disease,year,kecamatan' });
+
+      if (error) throw error;
+
+      alertBox.className = 'alert success';
+      alertBox.textContent = '✓ Data berhasil diperbarui!';
+      setTimeout(() => { window.location.href = 'map.html'; }, 1800);
+    } catch (err) {
+      console.error(err);
+      alertBox.className = 'alert error';
+      alertBox.textContent = '✗ Gagal menyimpan: ' + (err.message || 'Coba lagi.');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-save"></i> Perbarui Data';
+    }
+  });
+</script>
+</body>
+</html>

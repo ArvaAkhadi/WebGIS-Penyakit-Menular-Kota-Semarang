@@ -1,0 +1,114 @@
+[
+  {
+    "name": "Poncol",
+    "perempuan": 1,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Miroto",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Bulu Lor",
+    "perempuan": 2,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 1
+  },
+  {
+    "name": "Halmahera",
+    "perempuan": 1,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Karangdoro",
+    "perempuan": 1,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Lamper Tengah",
+    "perempuan": 2,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Candilama",
+    "perempuan": 0,
+    "laki_laki": 3,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Kagok",
+    "perempuan": 1,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Bangetayu",
+    "perempuan": 1,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Tlogosari Wetan",
+    "perempuan": 0,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Kedungmundu",
+    "perempuan": 1,
+    "laki_laki": 4,
+    "meninggal_laki_laki": 2,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Pudakpayung",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Gunungpati",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Mijen",
+    "perempuan": 0,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Ngaliyan",
+    "perempuan": 1,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Plamongan Sari",
+    "perempuan": 1,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  }
+]

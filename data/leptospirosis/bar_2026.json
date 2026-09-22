@@ -1,0 +1,191 @@
+[
+  {
+    "name": "Poncol",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Bandarharjo",
+    "perempuan": 1,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Bulu Lor",
+    "perempuan": 3,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Halmahera",
+    "perempuan": 1,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Bugangan",
+    "perempuan": 2,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Pandanaran",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Lamper Tengah",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Lebdosari",
+    "perempuan": 1,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Manyaran",
+    "perempuan": 0,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Krobokan",
+    "perempuan": 1,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Ngemplak Simongan",
+    "perempuan": 2,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Gayamsari",
+    "perempuan": 1,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Kagok",
+    "perempuan": 1,
+    "laki_laki": 3,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Pegandan",
+    "perempuan": 0,
+    "laki_laki": 5,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Genuk",
+    "perempuan": 1,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Tlogosari Kulon",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Tlogosari Wetan",
+    "perempuan": 1,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Kedungmundu",
+    "perempuan": 5,
+    "laki_laki": 5,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Rowosari",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Ngesrep",
+    "perempuan": 4,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Padangsari",
+    "perempuan": 1,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Srondol",
+    "perempuan": 0,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Gunungpati",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Sekaran",
+    "perempuan": 0,
+    "laki_laki": 3,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Mijen",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Purwoyoso",
+    "perempuan": 2,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Ngaliyan",
+    "perempuan": 1,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  }
+]

@@ -1,0 +1,59 @@
+{
+  "status": true,
+  "title": "Jumlah Kasus Tuberculosis Baru",
+  "subtitle": "(Orang)",
+  "category": "pilah_gender",
+  "kumulatif": "kumulatif",
+  "satuan": "",
+  "count": 2,
+  "data": [
+    {
+      "name": "Jumlah Laki-laki",
+      "data": [
+        229,
+        206,
+        252,
+        164,
+        197,
+        197,
+        188,
+        164,
+        30,
+        46,
+        44,
+        31
+      ]
+    },
+    {
+      "name": "Jumlah Perempuan",
+      "data": [
+        169,
+        167,
+        199,
+        201,
+        190,
+        151,
+        186,
+        154,
+        24,
+        39,
+        31,
+        28
+      ]
+    }
+  ],
+  "datatab": [
+    {
+      "name": "Jumlah Laki-laki",
+      "data": [
+        1748
+      ]
+    },
+    {
+      "name": "Jumlah Perempuan",
+      "data": [
+        1539
+      ]
+    }
+  ]
+}

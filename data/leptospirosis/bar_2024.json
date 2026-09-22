@@ -1,0 +1,121 @@
+[
+  {
+    "name": "Poncol",
+    "perempuan": 0,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Bulu Lor",
+    "perempuan": 1,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Halmahera",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Bugangan",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Karangayu",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Lebdosari",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Krobokan",
+    "perempuan": 1,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Gayamsari",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Candilama",
+    "perempuan": 0,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Kagok",
+    "perempuan": 1,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Pegandan",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Bangetayu",
+    "perempuan": 2,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 1
+  },
+  {
+    "name": "Tlogosari Kulon",
+    "perempuan": 0,
+    "laki_laki": 2,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Tlogosari Wetan",
+    "perempuan": 0,
+    "laki_laki": 4,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Kedungmundu",
+    "perempuan": 0,
+    "laki_laki": 4,
+    "meninggal_laki_laki": 1,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Tambakaji",
+    "perempuan": 0,
+    "laki_laki": 1,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  },
+  {
+    "name": "Purwoyoso",
+    "perempuan": 1,
+    "laki_laki": 0,
+    "meninggal_laki_laki": 0,
+    "meninggal_perempuan": 0
+  }
+]

@@ -1,0 +1,105 @@
+{
+  "status": true,
+  "title": "Jumlah Kasus  Leptospirosis",
+  "subtitle": "Sumber : Gismap/Leptospirosis",
+  "category": "penyakit",
+  "kumulatif": "kumulatif",
+  "satuan": "",
+  "count": 4,
+  "data": [
+    {
+      "name": "Penderita Laki-laki",
+      "data": [
+        0,
+        6,
+        4,
+        3,
+        3,
+        2,
+        3,
+        0,
+        3,
+        2,
+        5,
+        4
+      ]
+    },
+    {
+      "name": "Penderita Perempuan",
+      "data": [
+        0,
+        3,
+        5,
+        1,
+        4,
+        2,
+        2,
+        1,
+        2,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "name": "Meninggal Laki-laki",
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2,
+        0
+      ]
+    },
+    {
+      "name": "Meninggal Perempuan",
+      "data": [
+        0,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "datatab": [
+    {
+      "name": "Penderita Laki-laki",
+      "data": [
+        35
+      ]
+    },
+    {
+      "name": "Penderita Perempuan",
+      "data": [
+        23
+      ]
+    },
+    {
+      "name": "Meninggal Laki-laki",
+      "data": [
+        4
+      ]
+    },
+    {
+      "name": "Meninggal Perempuan",
+      "data": [
+        4
+      ]
+    }
+  ]
+}

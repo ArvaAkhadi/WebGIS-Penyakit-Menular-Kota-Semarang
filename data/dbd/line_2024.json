@@ -1,0 +1,105 @@
+{
+  "status": true,
+  "title": "Kasus Demam Berdarah Dangue",
+  "subtitle": "sumber: HEWS",
+  "category": "penyakit",
+  "kumulatif": "kumulatif",
+  "satuan": "",
+  "count": 4,
+  "data": [
+    {
+      "name": "Penderita Laki-laki",
+      "data": [
+        14,
+        23,
+        23,
+        22,
+        39,
+        35,
+        11,
+        6,
+        7,
+        7,
+        9,
+        9
+      ]
+    },
+    {
+      "name": "Penderita Perempuan",
+      "data": [
+        6,
+        19,
+        20,
+        14,
+        12,
+        7,
+        11,
+        10,
+        3,
+        8,
+        3,
+        4
+      ]
+    },
+    {
+      "name": "Meninggal Laki-laki",
+      "data": [
+        0,
+        0,
+        1,
+        0,
+        2,
+        1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "Meninggal Perempuan",
+      "data": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "datatab": [
+    {
+      "name": "Penderita Laki-laki",
+      "data": [
+        205
+      ]
+    },
+    {
+      "name": "Penderita Perempuan",
+      "data": [
+        117
+      ]
+    },
+    {
+      "name": "Meninggal Laki-laki",
+      "data": [
+        5
+      ]
+    },
+    {
+      "name": "Meninggal Perempuan",
+      "data": [
+        1
+      ]
+    }
+  ]
+}
