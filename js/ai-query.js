@@ -1,152 +1,309 @@
 /* =========================================================
-   AI QUERY — parser sederhana untuk pertanyaan tentang data
+   AI QUERY — Versi LLM (Groq + Llama 3.3 70B)
+   Dengan Function Calling untuk akses data real WebGIS
    ========================================================= */
 const AIQuery = (function() {
 
-  /* Referensi ke state global WebGIS (diisi oleh map.html) */
+  const GROQ_API_KEY = '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';  // ← Ganti dengan key Anda
+  const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+  const MODEL = 'llama-3.3-70b-versatile';
+
   let _state = null;
-  let _getColor = null;
   let _labelPenyakit = { dbd: 'DBD', leptospirosis: 'Leptospirosis', tb_baru: 'TB Baru' };
+  let _conversationHistory = [];
 
-  function init(state, getColorFn) {
+  function init(state) {
     _state = state;
-    _getColor = getColorFn;
+    _conversationHistory = [];
   }
 
-  /* Deteksi penyakit dari teks */
-  function detectPenyakit(text) {
-    const t = text.toLowerCase();
-    if (t.includes('dbd') || t.includes('dengue') || t.includes('berdarah')) return 'dbd';
-    if (t.includes('lepto')) return 'leptospirosis';
-    if (t.includes('tb') || t.includes('tuberkulosis') || t.includes('tuberculosis')) return 'tb_baru';
-    return null;
-  }
+  /* =========================================================
+     TOOLS — fungsi yang bisa dipanggil LLM
+     ========================================================= */
+  const tools = {
+    get_top_kecamatan: function(args) {
+      const penyakit = args.penyakit || _state.penyakit;
+      const n = args.jumlah || 5;
+      const asc = args.terendah === true;
+      const arr = Object.entries(_state.mapData).map(([kec, val]) => ({ kec, val }));
+      arr.sort((a, b) => asc ? a.val - b.val : b.val - a.val);
+      return {
+        penyakit: _labelPenyakit[penyakit] || penyakit,
+        tahun: _state.tahun,
+        ranking: arr.slice(0, n).map((r, i) => ({ peringkat: i + 1, kecamatan: r.kec, kasus: r.val }))
+      };
+    },
 
-  /* Deteksi tahun */
-  function detectTahun(text) {
-    const m = text.match(/\b(20\d{2})\b/);
-    return m ? parseInt(m[1]) : null;
-  }
-
-  /* Format daftar kecamatan dengan nilai */
-  function formatRanking(mapData, n = 5, asc = false) {
-    const arr = Object.entries(mapData).map(([kec, val]) => ({ kec, val }));
-    arr.sort((a, b) => asc ? a.val - b.val : b.val - a.val);
-    return arr.slice(0, n);
-  }
-
-  /* Format jawaban HTML */
-  function html(title, body) {
-    return '<h4 style="margin:0 0 8px;color:#2c3e50;font-size:13px;">' +
-           '<i class="fas fa-robot" style="color:#3498db;"></i> ' + title + '</h4>' +
-           '<div style="font-size:12px;line-height:1.7;color:#34495e;">' + body + '</div>';
-  }
-
-  /* Handler utama */
-  async function ask(question) {
-    if (!_state) return html('Asisten AI', 'Data belum siap. Tunggu beberapa detik.');
-
-    const q = question.toLowerCase().trim();
-    const penyakit = detectPenyakit(q) || _state.penyakit;
-    const tahun = detectTahun(q) || _state.tahun;
-    const labelP = _labelPenyakit[penyakit] || penyakit;
-
-    // ============ INTENT 1: Kasus tertinggi ============
-    if (q.match(/tertinggi|terbanyak|paling banyak|paling tinggi|max/)) {
-      const ranking = formatRanking(_state.mapData, 5, false);
-      let body = 'Untuk <b>' + labelP + '</b> tahun <b>' + tahun + '</b>, ' +
-                 '5 kecamatan dengan kasus terbanyak:<br><br>';
-      body += '<ol style="padding-left:20px;margin:0;">';
-      ranking.forEach(r => {
-        body += '<li><b>' + r.kec + '</b> — ' + r.val + ' kasus</li>';
-      });
-      body += '</ol>';
-      return html('Kasus Tertinggi', body);
-    }
-
-    // ============ INTENT 2: Kasus terendah ============
-    if (q.match(/terendah|paling sedikit|paling rendah|min/)) {
-      const ranking = formatRanking(_state.mapData, 5, true);
-      let body = 'Untuk <b>' + labelP + '</b> tahun <b>' + tahun + '</b>, ' +
-                 '5 kecamatan dengan kasus paling sedikit:<br><br>';
-      body += '<ol style="padding-left:20px;margin:0;">';
-      ranking.forEach(r => {
-        body += '<li><b>' + r.kec + '</b> — ' + r.val + ' kasus</li>';
-      });
-      body += '</ol>';
-      return html('Kasus Terendah', body);
-    }
-
-    // ============ INTENT 3: Total kasus ============
-    if (q.match(/total|jumlah|berapa.*kasus|semua/)) {
+    get_total_kasus: function(args) {
+      const penyakit = args.penyakit || _state.penyakit;
       const total = Object.values(_state.mapData).reduce((a, b) => a + b, 0);
       const nKec = Object.keys(_state.mapData).length;
-      const body = 'Total kasus <b>' + labelP + '</b> tahun <b>' + tahun + '</b>: ' +
-                   '<b style="color:#c0392b;font-size:16px;">' + total + '</b> kasus<br>' +
-                   'Tersebar di <b>' + nKec + '</b> kecamatan.';
-      return html('Total Kasus', body);
-    }
+      return {
+        penyakit: _labelPenyakit[penyakit] || penyakit,
+        tahun: _state.tahun,
+        total_kasus: total,
+        jumlah_kecamatan: nKec,
+        rata_rata: Math.round(total / nKec)
+      };
+    },
 
-    // ============ INTENT 4: Info kecamatan tertentu ============
-    for (const kec of Object.keys(_state.mapData)) {
-      if (q.includes(kec.toLowerCase())) {
-        const val = _state.mapData[kec] || 0;
-        const detail = _state.barData[kec] || {};
-        let body = '<b>' + kec + '</b><br>' +
-                   'Kasus <b>' + labelP + '</b> tahun <b>' + tahun + '</b>: ' +
-                   '<b style="color:#c0392b;">' + val + '</b><br>';
-        if (detail.laki_laki !== undefined) {
-          body += '<br><b>Detail:</b><br>' +
-                  '• Laki-laki: ' + detail.laki_laki + '<br>' +
-                  '• Perempuan: ' + detail.perempuan + '<br>' +
-                  '• Meninggal (L): ' + (detail.meninggal_laki_laki || 0) + '<br>' +
-                  '• Meninggal (P): ' + (detail.meninggal_perempuan || 0);
+    get_info_kecamatan: function(args) {
+      const kec = args.kecamatan;
+      if (!kec) return { error: 'Nama kecamatan tidak disebutkan' };
+      const key = Object.keys(_state.mapData).find(k =>
+        k.toLowerCase().includes(kec.toLowerCase())
+      );
+      if (!key) return { error: 'Kecamatan "' + kec + '" tidak ditemukan' };
+      const detail = _state.barData[key] || {};
+      return {
+        kecamatan: key,
+        penyakit: _labelPenyakit[_state.penyakit] || _state.penyakit,
+        tahun: _state.tahun,
+        total_kasus: _state.mapData[key] || 0,
+        laki_laki: detail.laki_laki || 0,
+        perempuan: detail.perempuan || 0,
+        meninggal_laki_laki: detail.meninggal_laki_laki || 0,
+        meninggal_perempuan: detail.meninggal_perempuan || 0
+      };
+    },
+
+    get_semua_kecamatan: function() {
+      return {
+        penyakit: _labelPenyakit[_state.penyakit] || _state.penyakit,
+        tahun: _state.tahun,
+        data: Object.entries(_state.mapData)
+          .sort((a, b) => b[1] - a[1])
+          .map(([kec, val]) => ({ kecamatan: kec, kasus: val }))
+      };
+    },
+
+    get_status_aksesibilitas: function() {
+      return {
+        informasi: 'Layer aksesibilitas faskes terbagi 4 zona: ' +
+          'Sangat Terjangkau (<1km, hijau), ' +
+          'Terjangkau (1-3km, kuning), ' +
+          'Jauh (3-5km, oranye), ' +
+          'Tidak Terjangkau (>5km, merah). ' +
+          'Aktifkan layer di panel untuk melihat sebarannya di peta.'
+      };
+    },
+
+    get_konteks_peta: function() {
+      return {
+        penyakit_aktif: _labelPenyakit[_state.penyakit] || _state.penyakit,
+        tahun_aktif: _state.tahun,
+        jumlah_kecamatan: Object.keys(_state.mapData).length,
+        total_kasus: Object.values(_state.mapData).reduce((a, b) => a + b, 0)
+      };
+    }
+  };
+
+  /* =========================================================
+     SKEMA TOOLS untuk LLM
+     ========================================================= */
+  const toolsSchema = [
+    {
+      type: 'function',
+      function: {
+        name: 'get_top_kecamatan',
+        description: 'Mendapatkan daftar kecamatan dengan kasus tertinggi atau terendah untuk penyakit dan tahun yang aktif.',
+        parameters: {
+          type: 'object',
+          properties: {
+            penyakit: { type: 'string', enum: ['dbd', 'leptospirosis', 'tb_baru'], description: 'Jenis penyakit' },
+            jumlah:   { type: 'integer', description: 'Jumlah kecamatan yang diminta (default 5)' },
+            terendah: { type: 'boolean', description: 'True jika ingin yang terendah, false/default untuk tertinggi' }
+          }
         }
-        return html('Info Kecamatan', body);
+      }
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_total_kasus',
+        description: 'Menghitung total kasus penyakit di seluruh kecamatan pada tahun aktif.',
+        parameters: { type: 'object', properties: {} }
+      }
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_info_kecamatan',
+        description: 'Mendapatkan detail kasus di kecamatan tertentu (L/P/meninggal).',
+        parameters: {
+          type: 'object',
+          properties: {
+            kecamatan: { type: 'string', description: 'Nama kecamatan, contoh: Tembalang, Genuk' }
+          },
+          required: ['kecamatan']
+        }
+      }
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_semua_kecamatan',
+        description: 'Mendapatkan data semua kecamatan, diurutkan dari kasus terbanyak.',
+        parameters: { type: 'object', properties: {} }
+      }
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_status_aksesibilitas',
+        description: 'Menjelaskan zona aksesibilitas faskes (buffer 1/3/5 km).',
+        parameters: { type: 'object', properties: {} }
+      }
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'get_konteks_peta',
+        description: 'Mendapatkan konteks peta saat ini (penyakit & tahun aktif, total kasus).',
+        parameters: { type: 'object', properties: {} }
       }
     }
+  ];
 
-    // ============ INTENT 5: Aksesibilitas faskes ============
-    if (q.match(/akses|terjangkau|faskes|fasilitas|rumah sakit|puskesmas/)) {
-      const body = '<b>Info Aksesibilitas Faskes:</b><br><br>' +
-        '• <b style="color:#00c853;">Sangat Terjangkau</b> (&lt;1 km dari faskes)<br>' +
-        '• <b style="color:#ffd600;">Terjangkau</b> (1–3 km)<br>' +
-        '• <b style="color:#ff6d00;">Jauh</b> (3–5 km)<br>' +
-        '• <b style="color:#d50000;">Tidak Terjangkau</b> (&gt;5 km)<br><br>' +
-        'Aktifkan layer di panel kanan untuk melihat sebarannya di peta.';
-      return html('Aksesibilitas Faskes', body);
+  /* =========================================================
+     SYSTEM PROMPT
+     ========================================================= */
+  const SYSTEM_PROMPT = `Anda adalah "Asisten AI Peta" untuk WebGIS Dinamika Penyakit Menular Kota Semarang.
+
+Tugas Anda: menjawab pertanyaan pengguna tentang data penyakit menular (DBD, Leptospirosis, TB Baru) dan aksesibilitas fasilitas kesehatan di Kota Semarang.
+
+ATURAN PENTING:
+1. SELALU panggil fungsi (tool) yang tersedia untuk mendapatkan data AKTUAL dari peta. JANGAN mengarang angka.
+2. Jawab dengan BAHASA INDONESIA yang ramah, jelas, dan ringkas.
+3. Jika data yang diminta tidak tersedia, katakan dengan jujur.
+4. Jika pengguna menyebut nama kecamatan yang mirip (misal "tembalang" → "Tembalang"), tetap coba panggil fungsi.
+5. Sajikan data dalam bentuk poin-poin yang mudah dibaca.
+6. Jika pengguna meminta rekomendasi atau insight, berikan analisis singkat setelah data.
+7. JANGAN tampilkan nama fungsi atau kode teknis ke pengguna.
+
+KONTEKS WEBGIS:
+- Penyakit yang dipantau: DBD, Leptospirosis, TB Baru
+- Periode: 2019-2026
+- Wilayah: 16 kecamatan di Kota Semarang
+- Buffer aksesibilitas: 1km (sangat terjangkau), 3km (terjangkau), 5km (jauh), >5km (tidak terjangkau)`;
+
+  /* =========================================================
+     MAIN ASK FUNCTION
+     ========================================================= */
+  async function ask(userMessage) {
+    if (!_state) {
+      return '<div style="color:#ffb3b3;">Data peta belum siap. Tunggu beberapa detik.</div>';
     }
 
-    // ============ INTENT 6: Bandingkan 2 penyakit ============
-    if (q.match(/banding|vs|dibandingkan/)) {
-      const body = '<b>Perbandingan Penyakit:</b><br><br>' +
-                   'Penyakit saat ini: <b>' + labelP + '</b><br>' +
-                   'Tahun: <b>' + tahun + '</b><br><br>' +
-                   'Ganti dropdown "Jenis Penyakit" dan "Tahun" untuk ' +
-                   'membandingkan data antar penyakit/tahun.';
-      return html('Perbandingan', body);
+    // Tambahkan ke history
+    _conversationHistory.push({ role: 'user', content: userMessage });
+
+    // Batasi history agar tidak terlalu panjang (10 pesan terakhir)
+    if (_conversationHistory.length > 10) {
+      _conversationHistory = _conversationHistory.slice(-10);
     }
 
-    // ============ INTENT 7: Bantuan ============
-    if (q.match(/bantu|help|apa yang bisa|contoh|panduan/)) {
-      const body = 'Saya bisa menjawab pertanyaan seperti:<br><br>' +
-        '• "Kecamatan mana yang DBD-nya tertinggi tahun 2025?"<br>' +
-        '• "Total kasus leptospirosis 2024?"<br>' +
-        '• "Berapa kasus DBD di Tembalang?"<br>' +
-        '• "Daerah mana yang tidak terjangkau faskes?"<br>' +
-        '• "Bandingkan DBD dan TB"';
-      return html('Panduan', body);
-    }
+    try {
+      // === Panggilan Pertama ===
+      let messages = [
+        { role: 'system', content: SYSTEM_PROMPT },
+        ..._conversationHistory
+      ];
 
-    // ============ FALLBACK ============
-    const body = 'Maaf, saya belum mengerti pertanyaan tersebut.<br><br>' +
-                 'Coba tanya seperti:<br>' +
-                 '• "Kasus DBD tertinggi 2025?"<br>' +
-                 '• "Total kasus Leptospirosis?"<br>' +
-                 '• "Info Tembalang"<br>' +
-                 '• Ketik "bantuan" untuk daftar lengkap';
-    return html('Tidak Dikenali', body);
+      let response = await callGroq(messages, toolsSchema);
+      let choice = response.choices[0];
+      let assistantMsg = choice.message;
+
+      // === Cek apakah LLM minta panggil tool ===
+      let iterations = 0;
+      while (assistantMsg.tool_calls && assistantMsg.tool_calls.length > 0 && iterations < 5) {
+        iterations++;
+        messages.push(assistantMsg);
+
+        // Eksekusi semua tool calls
+        for (const toolCall of assistantMsg.tool_calls) {
+          const fnName = toolCall.function.name;
+          let args = {};
+          try { args = JSON.parse(toolCall.function.arguments || '{}'); } catch(e){}
+
+          console.log('🔧 Tool call:', fnName, args);
+          const result = tools[fnName] ? tools[fnName](args) : { error: 'Fungsi tidak ditemukan' };
+
+          messages.push({
+            role: 'tool',
+            tool_call_id: toolCall.id,
+            content: JSON.stringify(result)
+          });
+        }
+
+        // Panggil LLM lagi dengan hasil tool
+        response = await callGroq(messages, toolsSchema);
+        assistantMsg = response.choices[0].message;
+      }
+
+      // === Jawaban Final ===
+      const finalText = assistantMsg.content || 'Maaf, saya tidak bisa menjawab saat ini.';
+      _conversationHistory.push({ role: 'assistant', content: finalText });
+
+      return formatMarkdown(finalText);
+
+    } catch (err) {
+      console.error('AI Error:', err);
+      return '<div style="color:#ffb3b3;">⚠️ Error AI: ' + err.message + '<br>' +
+             'Coba lagi atau cek API key.</div>';
+    }
   }
 
-  return { init, ask };
+  /* =========================================================
+     CALL GROQ API
+     ========================================================= */
+  async function callGroq(messages, tools) {
+    const res = await fetch(GROQ_URL, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + GROQ_API_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: messages,
+        tools: tools,
+        tool_choice: 'auto',
+        temperature: 0.3,
+        max_tokens: 1024
+      })
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error('HTTP ' + res.status + ': ' + errText.substring(0, 100));
+    }
+
+    return await res.json();
+  }
+
+  /* =========================================================
+     MARKDOWN FORMATTER (sederhana)
+     ========================================================= */
+  function formatMarkdown(text) {
+    return text
+      // Bold
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      // Italic
+      .replace(/\*(.+?)\*/g, '<i>$1</i>')
+      // List items
+      .replace(/^\s*[-•]\s+(.+)$/gm, '• $1')
+      .replace(/^\s*(\d+)\.\s+(.+)$/gm, '$1. $2')
+      // Line breaks
+      .replace(/\n/g, '<br>');
+  }
+
+  /* =========================================================
+     CLEAR HISTORY
+     ========================================================= */
+  function clearHistory() {
+    _conversationHistory = [];
+  }
+
+  return { init, ask, clearHistory };
 })();
