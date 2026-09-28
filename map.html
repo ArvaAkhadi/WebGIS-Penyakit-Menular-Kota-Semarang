@@ -330,28 +330,30 @@
 </div>
 
 <!-- ================= AI CHAT WIDGET ================= -->
-<div id="ai-widget">
-  <div id="ai-header" onclick="toggleAI()">
-    <div class="icon"><i class="fas fa-robot"></i></div>
-    <div class="titles">
-      <div class="t1">Asisten AI Peta</div>
-      <div class="t2">Query Cerdas AI</div>
-    </div>
-    <i class="fas fa-chevron-down chevron"></i>
-  </div>
-  <div id="ai-body">
-    <div class="ai-msg bot" id="aiWelcome">
-      <h4><i class="fas fa-robot"></i> Halo!</h4>
-      <div>Saya asisten AI. Tanya apa saja tentang data penyakit, aksesibilitas, atau wilayah. Contoh: <b>"Kasus DBD tertinggi 2025?"</b></div>
-    </div>
-  </div>
-  <div id="ai-input-row">
-    <input type="text" id="aiInput" placeholder="Tanya AI tentang data..." onkeypress="if(event.key==='Enter')askAI()">
-    <button onclick="askAI()"><i class="fas fa-paper-plane"></i></button>
-  </div>
-</div>
+async function askAI() {
+  var input = document.getElementById('aiInput');
+  var q = input.value.trim();
+  if (!q) return;
+  input.value = '';
 
-<div id="loading">Memuat data...</div>
+  var body = document.getElementById('ai-body');
+  var userMsg = document.createElement('div');
+  userMsg.className = 'ai-msg user';
+  userMsg.textContent = q;
+  body.appendChild(userMsg);
+  body.scrollTop = body.scrollHeight;
+
+  var loadMsg = document.createElement('div');
+  loadMsg.className = 'ai-msg bot';
+  loadMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menganalisis dengan AI...';
+  body.appendChild(loadMsg);
+  body.scrollTop = body.scrollHeight;
+
+  // Panggil AI (async)
+  var answerHtml = await AIQuery.ask(q);
+  loadMsg.innerHTML = answerHtml;
+  body.scrollTop = body.scrollHeight;
+} 
 
 <!-- ================= LIBRARIES ================= -->
 <script src="js/qgis2web_expressions.js"></script>
@@ -794,7 +796,7 @@ function askAI() {
 
 /* Init AI Query setelah state siap */
 setTimeout(() => {
-  if (window.state) AIQuery.init(window.state, getColor);
+  if (window.state) AIQuery.init(window.state);
 }, 500);
 
 /* =========================================================
